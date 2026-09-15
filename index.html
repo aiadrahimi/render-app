@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RenderCara · detección local de rostros</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,480;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <div>
+            <h1>RenderCara</h1>
+            <p>MediaPipe + OpenCV · todo se procesa en este dispositivo</p>
+          </div>
+        </div>
+        <ul class="status-row" aria-label="Estado del sistema">
+          <li>
+            <span class="dot" id="status-engine" data-state="idle"></span>
+            Motor <strong id="engine-label">cargando</strong>
+          </li>
+          <li>
+            <span class="dot" id="status-camera" data-state="idle"></span>
+            Cámara <strong id="camera-label">apagada</strong>
+          </li>
+          <li>
+            <span class="dot" id="status-faces" data-state="idle"></span>
+            Caras <strong id="faces-label">0</strong>
+          </li>
+        </ul>
+      </header>
+
+      <main class="stage">
+        <section class="viewport" aria-label="Vista de cámara">
+          <video id="camera" playsinline muted hidden></video>
+          <canvas id="frame"></canvas>
+          <div class="viewport-overlay" id="empty-state">
+            <p class="kicker">Estudio local</p>
+            <h2>La cara se detecta aquí, no en un servidor</h2>
+            <p>
+              Encendé la cámara o subí una foto. MediaPipe ubica el rostro,
+              OpenCV lo desenfoca y recién ahí queda lista para guardar.
+            </p>
+          </div>
+          <div class="hud">
+            <span id="hud-fps">0 fps</span>
+            <span id="hud-size">—</span>
+            <span id="hud-blur">desenfoque 18</span>
+          </div>
+        </section>
+
+        <aside class="panel">
+          <section class="card">
+            <h2>Captura</h2>
+            <div class="actions">
+              <button id="btn-camera" class="btn primary" type="button">
+                Encender cámara
+              </button>
+              <button id="btn-shot" class="btn shutter" type="button" disabled>
+                Sacar foto
+              </button>
+              <label class="btn ghost file-btn">
+                Subir imagen
+                <input id="file-input" type="file" accept="image/*" hidden />
+              </label>
+            </div>
+            <p class="hint">
+              La foto se guarda ya procesada. El original con la cara nítida no
+              se almacena.
+            </p>
+          </section>
+
+          <section class="card">
+            <h2>Render de cara</h2>
+            <label class="switch">
+              <input id="toggle-blur" type="checkbox" checked />
+              <span>Desenfocar rostros en tiempo real</span>
+            </label>
+            <label class="switch">
+              <input id="toggle-mesh" type="checkbox" checked />
+              <span>Mostrar malla facial (478 puntos)</span>
+            </label>
+            <label class="field">
+              <span>Intensidad del desenfoque <em id="blur-value">18</em></span>
+              <input id="blur-range" type="range" min="4" max="51" step="1" value="18" />
+            </label>
+            <label class="field">
+              <span>Máximo de caras</span>
+              <input id="max-faces" type="range" min="1" max="8" step="1" value="4" />
+            </label>
+          </section>
+
+          <section class="card gallery-card">
+            <div class="gallery-head">
+              <h2>Disponibles</h2>
+              <span id="gallery-count">0 fotos</span>
+            </div>
+            <p class="hint">
+              Quedan en este navegador, listas para descargar o reenviar. Ya
+              salen con la cara desenfocada.
+            </p>
+            <div id="gallery" class="gallery"></div>
+            <div class="actions compact">
+              <button id="btn-export" class="btn ghost" type="button" disabled>
+                Descargar todas
+              </button>
+              <button id="btn-clear" class="btn danger-ghost" type="button" disabled>
+                Vaciar
+              </button>
+            </div>
+          </section>
+        </aside>
+      </main>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
