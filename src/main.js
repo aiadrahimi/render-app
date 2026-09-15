@@ -11,7 +11,6 @@ const video = document.querySelector("#camera");
 const canvas = document.querySelector("#frame");
 const ctx = canvas.getContext("2d", { willReadFrequently: true });
 const emptyState = document.querySelector("#empty-state");
-const fileInput = document.querySelector("#file-input");
 
 const ui = {
   btnCamera: document.querySelector("#btn-camera"),
@@ -22,7 +21,6 @@ const ui = {
   toggleMesh: document.querySelector("#toggle-mesh"),
   blurRange: document.querySelector("#blur-range"),
   blurValue: document.querySelector("#blur-value"),
-  maxFaces: document.querySelector("#max-faces"),
   gallery: document.querySelector("#gallery"),
   galleryCount: document.querySelector("#gallery-count"),
   engineLabel: document.querySelector("#engine-label"),
@@ -100,21 +98,6 @@ function processFrame(source, detections, options = {}) {
 
   if (ui.toggleBlur.checked) applyFaceBlur(faces, intensity);
   if (ui.toggleMesh.checked && drawnLandmarks.length) drawFaceMesh(ctx, drawnLandmarks);
-}
-
-async function detectStill(image) {
-  if (!state.landmarker) return { faceLandmarks: [] };
-  const wasRunning = state.running;
-  state.running = false;
-  await state.landmarker.setOptions({ runningMode: "IMAGE" });
-  const result = state.landmarker.detect(image);
-  await state.landmarker.setOptions({ runningMode: "VIDEO" });
-  state.lastVideoTime = -1;
-  if (wasRunning) {
-    state.running = true;
-    loop();
-  }
-  return result;
 }
 
 function loop() {
@@ -217,19 +200,6 @@ async function captureShot(source, detections, mirror, sourceLabel = "camara") {
   await renderGallery();
 }
 
-async function processUploadedFile(file) {
-  const url = URL.createObjectURL(file);
-  const image = new Image();
-  image.src = url;
-  await image.decode();
-  emptyState.classList.add("is-hidden");
-  syncCanvasSize(image);
-  const detections = await detectStill(image);
-  processFrame(image, detections, { mirror: false });
-  await captureShot(image, detections, false, "archivo");
-  URL.revokeObjectURL(url);
-}
-
 function shotCard(shot) {
   const url = URL.createObjectURL(shot.blob);
   const button = document.createElement("button");
@@ -303,7 +273,7 @@ async function boot() {
   await renderGallery();
 
   try {
-    state.landmarker = await createFaceLandmarker(Number(ui.maxFaces.value));
+    state.landmarker = await createFaceLandmarker();
     setDot(ui.statusEngine, "ready");
     ui.engineLabel.textContent = "MediaPipe listo";
   } catch (error) {
@@ -340,18 +310,9 @@ async function boot() {
     await clearShots();
     await renderGallery();
   });
-  fileInput.addEventListener("change", async () => {
-    const file = fileInput.files?.[0];
-    if (file) await processUploadedFile(file);
-    fileInput.value = "";
-  });
   ui.blurRange.addEventListener("input", () => {
     ui.blurValue.textContent = ui.blurRange.value;
     ui.hudBlur.textContent = `desenfoque ${ui.blurRange.value}`;
-  });
-  ui.maxFaces.addEventListener("change", async () => {
-    if (!state.landmarker) return;
-    await state.landmarker.setOptions({ numFaces: Number(ui.maxFaces.value) });
   });
 }
 

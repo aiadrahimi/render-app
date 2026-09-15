@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RenderCara · detección local de rostros</title>
+    <title>UTN-FRBA · HideFace</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,10 +16,10 @@
     <div class="app">
       <header class="topbar">
         <div class="brand">
-          <span class="brand-mark" aria-hidden="true"></span>
+          <img class="brand-mark" src="/logo.png" alt="UTN-FRBA" />
           <div>
-            <h1>RenderCara</h1>
-            <p>MediaPipe + OpenCV · todo se procesa en este dispositivo</p>
+            <h1>UTN-FRBA · HideFace</h1>
+            <p>Proyecto CIBIO</p>
           </div>
         </div>
         <ul class="status-row" aria-label="Estado del sistema">
@@ -43,17 +43,17 @@
           <video id="camera" playsinline muted hidden></video>
           <canvas id="frame"></canvas>
           <div class="viewport-overlay" id="empty-state">
-            <p class="kicker">Estudio local</p>
-            <h2>La cara se detecta aquí, no en un servidor</h2>
+            <h2>Tus imágenes protegidas.</h2>
             <p>
-              Encendé la cámara o subí una foto. MediaPipe ubica el rostro,
-              OpenCV lo desenfoca y recién ahí queda lista para guardar.
+              Encendé la cámara.
+              <br> Capturá una o varias imágenes.
+              <br> Por último, descargalas.
             </p>
           </div>
           <div class="hud">
             <span id="hud-fps">0 fps</span>
             <span id="hud-size">—</span>
-            <span id="hud-blur">desenfoque 18</span>
+            <span id="hud-blur">desenfoque 25</span>
           </div>
         </section>
 
@@ -67,19 +67,14 @@
               <button id="btn-shot" class="btn shutter" type="button" disabled>
                 Sacar foto
               </button>
-              <label class="btn ghost file-btn">
-                Subir imagen
-                <input id="file-input" type="file" accept="image/*" hidden />
-              </label>
             </div>
             <p class="hint">
-              La foto se guarda ya procesada. El original con la cara nítida no
-              se almacena.
+              La foto se guarda ya procesada.
             </p>
           </section>
 
           <section class="card">
-            <h2>Render de cara</h2>
+            <h2>Blurreo de cara</h2>
             <label class="switch">
               <input id="toggle-blur" type="checkbox" checked />
               <span>Desenfocar rostros en tiempo real</span>
@@ -89,12 +84,8 @@
               <span>Mostrar malla facial (478 puntos)</span>
             </label>
             <label class="field">
-              <span>Intensidad del desenfoque <em id="blur-value">18</em></span>
-              <input id="blur-range" type="range" min="4" max="51" step="1" value="18" />
-            </label>
-            <label class="field">
-              <span>Máximo de caras</span>
-              <input id="max-faces" type="range" min="1" max="8" step="1" value="4" />
+              <span>Intensidad del desenfoque <em id="blur-value">25</em></span>
+              <input id="blur-range" type="range" min="4" max="51" step="1" value="25" />
             </label>
           </section>
 
@@ -103,10 +94,6 @@
               <h2>Disponibles</h2>
               <span id="gallery-count">0 fotos</span>
             </div>
-            <p class="hint">
-              Quedan en este navegador, listas para descargar o reenviar. Ya
-              salen con la cara desenfocada.
-            </p>
             <div id="gallery" class="gallery"></div>
             <div class="actions compact">
               <button id="btn-export" class="btn ghost" type="button" disabled>

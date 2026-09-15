@@ -20,7 +20,7 @@ async function createWithDelegate(vision, numFaces, delegate) {
   });
 }
 
-export async function createFaceLandmarker(numFaces = 4) {
+export async function createFaceLandmarker(numFaces = 8) {
   const vision = await FilesetResolver.forVisionTasks(WASM_URL);
   try {
     return await createWithDelegate(vision, numFaces, "GPU");
